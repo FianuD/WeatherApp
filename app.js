@@ -8,13 +8,24 @@ window.addEventListener('load', () => {
             long = position.coords.longitude;
             lat = position.coords.latitude;
 
-            // weather api from darksky. Replaced long and latitude with values above
-            const api = `https://api.darksky.net/forecast/547570ce559a29780a721d4ec398d249/${lat},${long}`;
-        });
+            // darksky api doesn't allow calling on localhost
+            // so using proxy to bypass CORS error
+            const proxy = "https://cors-anywhere.herokuapp.com/";
 
-        fetch()
+            // weather api from darksky. Replaced long and latitude with values above
+            const api = `${proxy}https://api.darksky.net/forecast/547570ce559a29780a721d4ec398d249/${lat},${long}`;
+
+            fetch(api)
+            .then(response => {
+                //change the response or data received into a json
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+            });
+        });
     } else{
-        // For when location can not be found
-        h1.textContent = "Hey, this is not working because reasons!"
+        // For when location can not be pulled or is refused
+        h1.textContent = "Hey, this is not working because we didn't get a location!"
     }
 });
