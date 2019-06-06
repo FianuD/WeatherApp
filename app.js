@@ -1,6 +1,10 @@
 window.addEventListener('load', () => {
     let long;
     let lat;
+    // Get DOM elements that will display the weather information
+    let temperatureDescription = document.querySelector('.temperature-description');
+    let temperatureDegree = document.querySelector('.temperature-degree');
+    let locationTimezone = document.querySelector('.location-timezone');
 
     // to get longitude and latitude using built-in functionality
     if(navigator.geolocation){
@@ -21,7 +25,13 @@ window.addEventListener('load', () => {
                 return response.json();
             })
             .then(data => {
-                console.log(data);
+                // console.log(data);
+                // get out relevant information from pulled data.
+                const {temperature, summary} = data.currently;
+                // set DOM Elements from the API
+                temperatureDegree.textContent = temperature;
+                temperatureDescription.textContent = summary;
+                locationTimezone.textContent = data.timezone;
             });
         });
     } else{
