@@ -5,6 +5,8 @@ window.addEventListener('load', () => {
     let temperatureDescription = document.querySelector('.temperature-description');
     let temperatureDegree = document.querySelector('.temperature-degree');
     let locationTimezone = document.querySelector('.location-timezone');
+    let temperatureSection = document.querySelector('.temperature-section');
+    const temperatureSpan = document.querySelector('.temperature-section span');
 
     // to get longitude and latitude using built-in functionality
     if(navigator.geolocation){
@@ -26,16 +28,44 @@ window.addEventListener('load', () => {
             })
             .then(data => {
                 // console.log(data);
-                // get out relevant information from pulled data.
-                const {temperature, summary} = data.currently;
+                // get relevant information from pulled data.
+                const {temperature, summary, icon} = data.currently;
                 // set DOM Elements from the API
                 temperatureDegree.textContent = temperature;
                 temperatureDescription.textContent = summary;
                 locationTimezone.textContent = data.timezone;
+
+                // Formula for Celcius
+                let celcius = (temperature - 32) * (5 / 9);
+                // Set Icon
+                setIcons(icon, document.querySelector('.icon'))
+
+                // change temperature to Celcius/Fahrenheit
+                temperatureSection.addEventListener('click', () => {
+                    if(temperatureSpan.textContent === "F") {
+                        temperatureSpan.textContent = "C";
+                        temperatureDegree.textContent = celcius.toFixed(0);
+                    } else {
+                        temperatureSpan.textContent = "F";
+                        temperatureDegree.textContent = temperature;
+                    }
+                })
             });
         });
     } else{
         // For when location can not be pulled or is refused
         h1.textContent = "Hey, this is not working because we didn't get a location!"
     }
+
+    // using skyicons to show icon of current weather condition on the page
+    function setIcons(icon, iconId) {
+        // initialise the icons
+        const skycons = new Skycons({color: "white"});
+        // replace dashes with underscores and make text uppercase
+        const currentIcon = icon.replace(/-/g, "_").toUpperCase();
+        // to animate
+        skycons.play();
+        return skycons.set(iconId, Skycons[currentIcon])
+    }
+
 });
